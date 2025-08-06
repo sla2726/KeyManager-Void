@@ -2,11 +2,12 @@ import './global.css';
 import { useFonts } from 'expo-font';
 import { useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import { AlignJustify, Plus } from 'lucide-react-native';
+import { AlignJustify, Plus, Eye, EyeClosed } from 'lucide-react-native';
 
 interface Keys {
   name: string;
   key: string | number;
+  dist: string;
   date: string;
 }
 
@@ -16,20 +17,30 @@ export default function App() {
   });
 
   // Senha
-  const [keys, setKeys] = useState<Keys[]>([{ name: 'Hello world', key: '123cool', date: '2025' }]);
-  const [newKey, setNewKey] = useState('');
+  const [keys, setKeys] = useState<Keys[]>([
+    { name: 'Hello world', key: '123cool', dist: 'Conta 1', date: '2025' },
+  ]);
+  const [newKeyName, setNewKeyName] = useState('');
+  const [newKeyPass, setNewKeyPass] = useState('');
+  const [newKeyDist, setNewKeyDist] = useState('');
 
   const [isAddKey, setIsAddKey] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
 
   // Handlers
 
-  /* const handleAddKey = () => {
+  const handleAddKey = () => {
     const validatedKey: Keys = {
-      name: 
-    }
-    setKeys((prev) => [...prev, newKey] )
-  } */
+      name: newKeyName,
+      key: newKeyPass,
+      dist: newKeyDist,
+      date: new Date().toISOString(),
+    };
+    setKeys((prev) => [...prev, validatedKey]);
+  };
 
+  const formIsValid = newKeyName.trim() !== '' && newKeyPass.trim() !== '' && newKeyDist.trim() !== ''
+  
   if (!fontsLoaded) return null;
 
   return (
@@ -54,8 +65,8 @@ export default function App() {
         </View>
       </ScrollView>
 
-      <View className="relative flex h-10 w-full items-center justify-center bg-slate-800 z-20">
-        <View className="bg-gray-600 px-2 rounded-full">
+      <View className="relative z-20 flex h-10 w-full items-center justify-center bg-slate-800">
+        <View className="rounded-full bg-gray-600 px-2">
           <TouchableOpacity onPress={() => setIsAddKey((prev) => !prev)}>
             <Plus />
           </TouchableOpacity>
@@ -63,32 +74,47 @@ export default function App() {
       </View>
 
       {isAddKey && (
-        <View className="absolute flex items-center justify-center inset-0 w-full bg-black/50 z-10">
-          <View className="flex bg-gray-800 px-4 py-2 rounded-md border border-gray-500/60 flex-col w-3/4 items-center justify-center">
-            <Text className="text-white">Título</Text>
+        <View className="absolute inset-0 z-10 flex w-full items-center justify-center bg-black/50">
+          <View className="flex w-3/4 flex-col items-center justify-center rounded-md border border-gray-500/60 bg-slate-900 px-4 py-2">
+            <Text className="self-start text-slate-100">Título</Text>
             <TextInput
-              className="bg-gray-700 rounded-md w-3/4"
-              onChangeText={setNewKey}
-              value={newKey}
+              className="w-full rounded-md bg-gray-700 px-2"
+              onChangeText={setNewKeyName}
+              value={newKeyName}
               placeholder="Senha do YouTube..."
-              placeholderTextColor="white"
+              placeholderTextColor="gray"
             />
-            <Text className="text-white">Local/Destino</Text>
+            <Text className="self-start text-slate-100">Local/Destino</Text>
             <TextInput
-              className="bg-gray-700 rounded-md w-3/4"
-              onChangeText={setNewKey}
-              value={newKey}
+              className="w-full rounded-md bg-gray-700 px-2"
+              onChangeText={setNewKeyDist}
+              value={newKeyDist}
               placeholder="Conta user123..."
-              placeholderTextColor="white"
+              placeholderTextColor="gray"
             />
-            <Text className="text-white">Senha</Text>
+            <Text className="self-start text-slate-100">Senha</Text>
             <TextInput
-              className="bg-gray-700 rounded-md w-3/4"
-              onChangeText={setNewKey}
-              value={newKey}
+              className="w-full rounded-md bg-gray-700 px-2"
+              onChangeText={setNewKeyPass}
+              value={newKeyPass}
               placeholder="juninh987grau123..."
-              placeholderTextColor="white"
+              placeholderTextColor="gray"
+              secureTextEntry={showPassword}
             />
+            <TouchableOpacity
+              className="mt-1 self-start rounded-md bg-gray-600/40 px-4"
+              onPress={() => setShowPassword((prev) => !prev)}>
+              <View className="flex-row space-x-2">
+                {showPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
+                <Text className="pl-2 text-gray-400/60">Exibir senha</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className={`mt-4 w-full rounded-full px-4 py-2 ${formIsValid ? 'bg-sky-600' : 'bg-gray-600'}`}
+              disabled={!formIsValid}
+              onPress={() => handleAddKey()}>
+              <Text className="text-slate-100">Adicionar</Text>
+            </TouchableOpacity>
           </View>
         </View>
       )}
