@@ -29,7 +29,7 @@ export default function App() {
 
   // Senha
   const [keys, setKeys] = useState<Keys[]>([
-    { name: 'Hello world', key: '123cool', dist: 'Conta 1', date: '2025' },
+    { name: 'Hello world', key: '123cool', dist: 'youtube', date: '2025' },
     { name: 'Helorld', key: '12ool', dist: 'Cona 1', date: '2025' },
   ]);
   const [newKeyName, setNewKeyName] = useState('');
@@ -38,6 +38,8 @@ export default function App() {
 
   const [isAddKey, setIsAddKey] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
+
+  const [isPassDuplicate, setIsPassDuplicate] = useState(false);
 
   // Handlers
 
@@ -49,6 +51,11 @@ export default function App() {
       date: new Date().toISOString(),
     };
     setKeys((prev) => [...prev, validatedKey]);
+    setIsAddKey(false);
+    setNewKeyName('');
+    setNewKeyPass('');
+    setNewKeyDist('');
+    setIsPassDuplicate(false);
   };
 
   const formIsValid =
@@ -145,12 +152,17 @@ export default function App() {
                 <Text className="self-start text-slate-100">Senha</Text>
                 <TextInput
                   className="w-full rounded-md bg-gray-700 px-2"
-                  onChangeText={setNewKeyPass}
+                  onChangeText={(text) => {
+                    setNewKeyPass(text);
+                    const isDuplicate = keys.some((item) => item.key === text);
+                    setIsPassDuplicate(isDuplicate);
+                  }}
                   value={newKeyPass}
                   placeholder="juninh987grau123..."
                   placeholderTextColor="gray"
                   secureTextEntry={showPassword}
                 />
+
                 <TouchableOpacity
                   className="mt-1 self-start rounded-md bg-gray-600/40 px-4"
                   onPress={() => setShowPassword((prev) => !prev)}>
@@ -159,6 +171,7 @@ export default function App() {
                     <Text className="pl-2 text-gray-400/60">Exibir senha</Text>
                   </View>
                 </TouchableOpacity>
+                {isPassDuplicate && <Text className="text-red-500">Senha duplicada!</Text>}
                 <TouchableOpacity
                   className={`mt-4 w-full rounded-full px-4 py-2 ${formIsValid ? 'bg-sky-600' : 'bg-gray-600'}`}
                   disabled={!formIsValid}
